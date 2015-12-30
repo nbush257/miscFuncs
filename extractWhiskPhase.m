@@ -13,7 +13,6 @@ if any(isnan(theta))
     % If there are nan gaps larger than 50 ms, split those into separate
     % entities.
     if any(isnan(theta))
-        disp('Splitting the trace up into several cells based on nan gaps')
         nan_logical = ~isnan(theta);% find where not nan regions are
         nan_logical = [0 nan_logical  0]; % This allows the find(diff()) to include the first and last indices
         nanStart = find(diff(nan_logical)==1);
