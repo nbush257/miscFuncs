@@ -3,9 +3,12 @@ function [phaseOut,amplitudeOut] = extractWhiskPhase(theta,sr)
 % Uses the hilbert transform to calculate whisking phase as introdecud by
 % (Hill 2011, Neuron)
 % Uses 6-60Hz bandpass filtering.
-% If there are nans it interpolates over 50 ms. 
+% If there are nans it interpolates over 50 ms.
 
 %% deal with nans in the angle trace
+
+nanStart = 1;
+nanEnd = length(theta);
 if any(isnan(theta))
     interpolateWindwow = sr*.05; % interpolate over nan gaps that are less than 50 ms
     theta= InterpolateOverNans(theta,interpolateWindwow);
@@ -19,11 +22,9 @@ if any(isnan(theta))
         nanEnd = find(diff(nan_logical)==-1)-1;
         % Put each continuous stretch of non-nans into a cell
         for ii = 1:length(nanStart)
-                theta2{ii} = theta(nanStart(ii):nanEnd(ii));
+            theta2{ii} = theta(nanStart(ii):nanEnd(ii));
         end
-    else
-        nanStart = 1;
-        nanEnd = length(theta);
+        
     end
 else
     theta2{1} = theta;
@@ -56,6 +57,5 @@ for ii = 1:length(nanStart)
     phaseOut(nanStart(ii):nanEnd(ii)) = phase{ii};
     amplitudeOut(nanStart(ii):nanEnd(ii)) = amplitude{ii};
 end
-    
 
-            
+
