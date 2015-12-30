@@ -21,6 +21,9 @@ if any(isnan(theta))
         for ii = 1:length(nanStart)
                 theta2{ii} = theta(nanStart(ii):nanEnd(ii));
         end
+    else
+        nanStart = 1;
+        nanEnd = length(theta);
     end
 else
     theta2{1} = theta;
