@@ -5,6 +5,7 @@ function shadeVector(C)
 % periods. 
 
 ax = gca;
+C(isnan(C)) = 0;
 if ~islogical(C)
     C = logical(C);
 end
