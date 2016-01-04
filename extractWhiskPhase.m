@@ -11,11 +11,17 @@ nanStart = 1;
 nanEnd = length(theta);
 if any(isnan(theta))
     interpolateWindwow = sr*.05; % interpolate over nan gaps that are less than 50 ms
+    
+    % workaround if the first value is a nan
+    if isnan(theta(1))
+        theta(1) = 0;
+    end
     theta= InterpolateOverNans(theta,interpolateWindwow);
     
     % If there are nan gaps larger than 50 ms, split those into separate
     % entities.
     if any(isnan(theta))
+        if iscolumn(theta);theta = theta';end
         nan_logical = ~isnan(theta);% find where not nan regions are
         nan_logical = [0 nan_logical  0]; % This allows the find(diff()) to include the first and last indices
         nanStart = find(diff(nan_logical)==1);
@@ -24,6 +30,8 @@ if any(isnan(theta))
         for ii = 1:length(nanStart)
             theta2{ii} = theta(nanStart(ii):nanEnd(ii));
         end
+    else
+        theta2{1} = theta;
         
     end
 else
@@ -32,9 +40,12 @@ end
 
 
 %% filter theta from 6 to 60 hz
+ll = cellfun(@length,theta2);
 
 for ii = 1:length(theta2)
-    theta2{ii} = bwfilt(theta2{ii},sr,6,60);
+    if ll(ii)>40
+    theta2{ii} = bwfilt(theta2{ii},sr,4,60);
+    end
 end
 %% Apply Hilbert transform and convert into polar coordinates
 for ii = 1:length(theta2)
