@@ -16,5 +16,5 @@ cStart = find(diff(C)==1)+1;
 cEnd = find(diff(C)==-1);
 ho
 for ii = 1:length(cStart)
-    fill([cStart(ii) cStart(ii) cEnd(ii) cEnd(ii)],[ax.YLim(1) ax.YLim(2) ax.YLim(2) ax.YLim(1)],'k','facealpha',.5,'edgecolor','none')
+    fill([cStart(ii) cStart(ii) cEnd(ii) cEnd(ii)],[ax.YLim(1) ax.YLim(2) ax.YLim(2) ax.YLim(1)],'k','facealpha',.2,'edgecolor','none')
 end
