@@ -1,8 +1,11 @@
 function shadeVector(C)
 %% function shadeVector(C)
+% =======================
 % This function takes a binary vector and shades X values where the binary vector is true. 
 % Designed to be used to take a contact binary and shade during contact
 % periods. 
+% ======================
+% NEB 2016_06
 
 ax = gca;
 C(isnan(C)) = 0;
