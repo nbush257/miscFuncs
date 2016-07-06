@@ -1,4 +1,8 @@
 function xOut = interpNaNFilt (x,sr,lp)
+%% function xOut = interpNaNFilt (x,sr,lp)
+
+error('this function needs to be refactored! NEB 2016_07_05')
+
 if isrow(x);x = x';end
 xOut = NaN(size(x));
 cpt = ~isnan(x); % first find where it is not a NaN

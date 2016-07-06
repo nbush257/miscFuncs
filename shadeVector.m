@@ -1,9 +1,23 @@
 function shadeVector(C)
 %% function shadeVector(C)
-% This function takes a binary vector and shades X values where the binary vector is true.
+% =======================
+% This function takes a binary vector and shades X values where the binary vector is true. 
 % Designed to be used to take a contact binary and shade during contact
-% periods.
-    ax = gca;
+% periods. 
+% ======================
+% NEB 2016_06
+
+ax = gca;
+C(isnan(C)) = 0;
+if ~islogical(C)
+    C = logical(C);
+end
+
+C(1) = 0;
+C(end) = 0;
+cStart = find(diff(C)==1)+1;
+cEnd = find(diff(C)==-1);
+
 ho
 if ~isvector(C)% if the input is already converted from a binary vector to onsets, then skip conversion
     
