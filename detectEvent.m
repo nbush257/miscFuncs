@@ -1,7 +1,9 @@
 function [ons,offs] = detectEvent(x,varargin)
 %% function y = detectEvent(x,[threshold],[method])
+% ======================================
 % Detects when a signal goes high or low. Can be usefull for detecting when
 % TTL pulses are on/off.
+% ======================================
 % INPUTS:
 %           x - a 1 dimensional vector where you want to detect if
 %           something changes by a certain threshold 
@@ -13,13 +15,14 @@ function [ons,offs] = detectEvent(x,varargin)
 %           use the findpeaks algorithm builtin by matlab, or an algorithm
 %           that thresholds the signal and finds where it changes. 'diff'
 %           is useful for TTLs. Default is 'findpeaks'
+% =======================================
 % OUTPUTS:
 %           ons - a column vector of indices of x where a large postive
 %           change occurred
 %
 %           offs - a column vector of indices of x where a large negative
 %           change occured.
-%
+% =======================================
 % NEB 2016_06_28
 %% Varargin handling
 numvargs = length(varargin);

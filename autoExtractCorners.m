@@ -64,7 +64,7 @@ for i = firstFrame:50:lastFrame%info.numFrames
         
         subplot(122)
         image(Ifront)
-        colormpa('gray')
+        colormap('gray')
         hold on
         
         for j = 1:size(points(count).front,1)

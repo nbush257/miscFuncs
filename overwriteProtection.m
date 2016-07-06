@@ -24,6 +24,7 @@ function fName = overwriteProtection(fName)
 if exist(fName,'file')
     fprintf(repmat('=',10,1))
     fprintf('\n')
+    
     overwriteTGL = input('File already exists, overwrite? (Y/n)','s');
 
     if isempty(overwriteTGL)

@@ -7,6 +7,8 @@ function [CC,cStart,cEnd] = convertContact(C)
 %       CC: a nx2 matrix of contact onset and offset times (inclusive)
 %       cStart: a nx1 vector of just onset times
 %       cEnd: a nx1 vector of just offset times
+% NEB
+%% 
 
 C(isnan(C)) = 0;
 C = logical(C);

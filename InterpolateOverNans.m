@@ -39,6 +39,8 @@ else
     data(zeropad_stop) = 0;
   end;
   
+  dataOUT = data;
+  
   a = isnan(data);
   b = diff(a);
   starts = find(b == 1)+1;  % the index of the first NaN;

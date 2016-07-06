@@ -15,6 +15,7 @@ for viewCount = 1:2
     close all
     data_calib;
     click_calib;
+    check_cond = 0;
     init_intrinsic_param;
     go_calib_optim;
     saving_calib;

@@ -161,70 +161,76 @@ if ~isempty(unitIdx)
     %     end
     
     %% Extract Spike Shapes
-    % filter the analog data
-    filtAnalog = analogData;
-    fNames = fieldnames(filtAnalog);
-    for i =1:length(fNames)
-        filtAnalog.(fNames{i})=quick_filtfilt(filtAnalog.(fNames{i}),sr,300,3000);
-    end
-    
-    % Extract the spikes
-    spikes = struct;
-    spikesSamples = struct;
-    preWin = 40;
-    postWin = 40;
-    mapping = neuralynx;%hardcoded mapping for the neuralynx EIB-36PTB
-   % mapping = manualArtRemoved; disp('Using manual mapping override');%hardcoded for manually removing artifacts.
-    
-    
-    for i = 1:length(unitIdx)
-        slashIdx = strfind(neuralInfo(i).ProbeInfo,'/')+1;
-        underscoreIdx = strfind(neuralInfo(i).ProbeInfo,'_')-1;
-        dum1 =  strcmp([neuralInfo(i).ProbeInfo(slashIdx:underscoreIdx)],[mapping]);%generalized this string operation. If it's buggy try to generalize a different way. Right now it takes anything after the /
-        dum1 = dum1(:,1);
-        thisUnit = strrep(unitName{i},'/','');
-        thisUnit = strrep(thisUnit,' ','_');
-        chanInfo.(thisUnit) = mapping{dum1,2};
-    end
-    
-    for i  = 1:length(unitIdx)% for each unit
-        
-        thisUnit = strrep(unitName{i},'/','');
-        thisUnit = strrep(thisUnit,' ','_');
-        theseChan = chanInfo.(thisUnit);
-        
-        numChans = length(chanInfo.(thisUnit));
-        numSpikes = length(spikeTimes.(thisUnit));
-        spikes.(thisUnit) = nan(numChans,preWin+postWin+1,numSpikes);
-        spikeSamples.(thisUnit) = nan(numChans,numSpikes);
-        %convert channel name into entity number
-        for j =1:length(theseChan)
-            tempEntity = find(strcmp({entityInfo.EntityLabel},theseChan{j}));% only keeps the entity label from the raw analog trace, not any other analog traces with the same label.
-            theseEntity(j)= intersect(tempEntity,analogIdx);% try canging the mapping if this throws an error.
+    warning('Hotfixing this to skip importing spike shapes')
+    if 0
+        % filter the analog data
+        filtAnalog = analogData;
+        fNames = fieldnames(filtAnalog);
+        for i =1:length(fNames)
+            filtAnalog.(fNames{i})=bwfilt(filtAnalog.(fNames{i}),sr,300,8000);
         end
-        %extract spike shapes
-        for j = 1:numSpikes
-            count = 0;
-            for c = theseEntity
-                count = count+1;
-                [result,samp] = ns_GetIndexByTime(handle,theseEntity(count),spikeTimes.(thisUnit)(j),0);
-                if result ~= 0
-                    disp(['Problem getting sample index for spike number ' int2str(j) ' on channel ' int2str(c)]);
-                else
-                    if (samp+postWin)>contDataLength || (samp-preWin)<1
-                        disp(['There was a spike that occurred within ' int2str(preWin) ' samples of the trace beginning or ' int2str(postWin) ' samples of the end. Ignoring.']);
-                    else
-                        chan = strrep(entityInfo(theseEntity(count)).EntityLabel,' ','_');
-                        spikes.(thisUnit)(count,:,j) = filtAnalog.(chan)(samp-preWin:samp+postWin);
-                        spikeSamples.(thisUnit)(count,j) = samp;
+        
+        % Extract the spikes
+        if 0
+            spikes = struct;
+            spikesSamples = struct;
+            preWin = 40;
+            postWin = 40;
+            mapping = neuralynx;%hardcoded mapping for the neuralynx EIB-36PTB
+            % mapping = manualArtRemoved; disp('Using manual mapping override');%hardcoded for manually removing artifacts.
+            
+            
+            for i = 1:length(unitIdx)
+                slashIdx = strfind(neuralInfo(i).ProbeInfo,'/')+1;
+                underscoreIdx = strfind(neuralInfo(i).ProbeInfo,'_')-1;
+                dum1 =  strcmp([neuralInfo(i).ProbeInfo(slashIdx:underscoreIdx)],[mapping]);%generalized this string operation. If it's buggy try to generalize a different way. Right now it takes anything after the /
+                dum1 = dum1(:,1);
+                thisUnit = strrep(unitName{i},'/','');
+                thisUnit = strrep(thisUnit,' ','_');
+                chanInfo.(thisUnit) = mapping{dum1,2};
+            end
+            
+            for i  = 1:length(unitIdx)% for each unit
+                
+                thisUnit = strrep(unitName{i},'/','');
+                thisUnit = strrep(thisUnit,' ','_');
+                theseChan = chanInfo.(thisUnit);
+                
+                numChans = length(chanInfo.(thisUnit));
+                numSpikes = length(spikeTimes.(thisUnit));
+                spikes.(thisUnit) = nan(numChans,preWin+postWin+1,numSpikes);
+                spikeSamples.(thisUnit) = nan(numChans,numSpikes);
+                %convert channel name into entity number
+                for j =1:length(theseChan)
+                    tempEntity = find(strcmp({entityInfo.EntityLabel},theseChan{j}));% only keeps the entity label from the raw analog trace, not any other analog traces with the same label.
+                    theseEntity(j)= intersect(tempEntity,analogIdx);% try canging the mapping if this throws an error.
+                end
+                %extract spike shapes
+                for j = 1:numSpikes
+                    count = 0;
+                    for c = theseEntity
+                        count = count+1;
+                        [result,samp] = ns_GetIndexByTime(handle,theseEntity(count),spikeTimes.(thisUnit)(j),0);
+                        if result ~= 0
+                            disp(['Problem getting sample index for spike number ' int2str(j) ' on channel ' int2str(c)]);
+                        else
+                            if (samp+postWin)>contDataLength || (samp-preWin)<1
+                                disp(['There was a spike that occurred within ' int2str(preWin) ' samples of the trace beginning or ' int2str(postWin) ' samples of the end. Ignoring.']);
+                            else
+                                chan = strrep(entityInfo(theseEntity(count)).EntityLabel,' ','_');
+                                spikes.(thisUnit)(count,:,j) = filtAnalog.(chan)(samp-preWin:samp+postWin);
+                                spikeSamples.(thisUnit)(count,j) = samp;
+                            end
+                            
+                        end
                     end
                     
                 end
+                
             end
-            
         end
-        
     end
+    
 end
 
 %% Clean up
