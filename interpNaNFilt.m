@@ -1,37 +1,61 @@
-function xOut = interpNaNFilt (x,sr,lp)
-%% function xOut = interpNaNFilt (x,sr,lp)
+function xOut = interpNaNFilt (x,sr,lp,varargin)
+%% function xOut = interpNaNFilt (x,sr,lp,[winsize])
+% ==================================================
+% Applies an acausal lowpass filter to a vector x which contains NaNs. This
+% is particularly useful if you have many whisks intervening with NaN
+% sections. It will also fill in NaN gaps if desired (defaults to fill gaps 
+% less than 10 ms)
+% ===================================================
+%   INPUTS:
+%           x - a vector of some signal you want to filter
+%           sr - sampling rate in Hz.
+%           lp - lowpass threshold to filter at
+%           [winsize] - size of window at which you want to fill small gaps.
+%              Default is 10 ms
+%   OUPTUTS:
+%           xOut - a filtered version of x
+% ====================================================
+% Originally part of EDA toolbox. Refactored by NEB 2016_07_06
+%% varargin handling
 
-error('this function needs to be refactored! NEB 2016_07_05')
+narginchk(3,4);
+numvargs = length(varargin);
+optargs = {10}; % winsize in ms. Default is 10 ms
+optargs(1:numvargs) = varargin;
+[winsize] = optargs{:};
 
-if isrow(x);x = x';end
-xOut = NaN(size(x));
-cpt = ~isnan(x); % first find where it is not a NaN
-ccomp = [0; cpt; 0]; % add these for easier diffing (and force first frame to be a start)
-difc = diff(ccomp);
-whstart = find(difc == 1);  % mark where all whisks START
-whend = find(difc == -1) - 1; % mark where all whisks END
-nwhisks = length(whstart); % how many whisks are there
+%%
+winsize = sr/1000*winsize; % convert winsize into samples
 
-% remove small gaps
+if ~isvector(x)
+    error('Input is not a vector')
+end
+% make x a column vector
+x = x(:);
 
-for ii = 2:nwhisks
-    if (whstart(ii)-whend(ii-1))<50
-        x(whend(ii-1)+1:whstart(ii)-1) = interp1([whend(ii-1) whstart(ii)],[x(whend(ii-1)) x(whstart(ii))],whend(ii-1)+1:whstart(ii)-1);
-    end
+% remove small gaps if desired. Default is 10 ms. Skips if the gap is zero
+if winsize >0
+    x = InterpolateOverNans(x,winsize);
 end
 
-%refind NaN periods to 
-cpt = ~isnan(x); % first find where it is not a NaN
-ccomp = [0; cpt; 0]; % add these for easier diffing (and force first frame to be a start)
-difc = diff(ccomp);
-whstart = find(difc == 1);  % mark where all whisks START
-whend = find(difc == -1) - 1; % mark where all whisks END
-nwhisks = length(whstart); % how many whisks are there
+%% find not NaN segments to filter
+xOut = NaN(size(x));
 
-for ii = 1:nwhisks
-    inds = whstart(ii):whend(ii);
+notNan = ~isnan(x); % first find where it is not a NaN
+notNaN = [0; notNan; 0]; % add these for easier diffing (and force first frame to be a start)
+difNaN = diff(notNaN);
+starts = find(difNaN == 1);  % mark where all nonNaN segments START
+stops = find(difNaN == -1) - 1; % mark where all nonNaN segments END
+nsegs = length(starts); % how many nonNaN segments are there
+
+%% Loop over not nan segments and filter them
+for ii = 1:nsegs
+    inds = starts(ii):stops(ii);
+    
+    % skip the filtering if the segment is less than 6 points long
     if length(inds)<=6
         continue
     end
-    xOut(inds) = bwfilt(x(inds),sr,0,lp);% this was filtered at 85 Hz for data taken at 1000 Hz
+    
+    xOut(inds) = bwfilt(x(inds),sr,0,lp);% 
 end
