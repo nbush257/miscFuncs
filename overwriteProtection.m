@@ -26,7 +26,7 @@ if exist(fName,'file')
     fprintf('\n')
     
     overwriteTGL = input('File already exists, overwrite? (Y/n)','s');
-
+    overwriteTGL = lower(overwriteTGL);
     if isempty(overwriteTGL)
         overwriteTGL = 'y';
     end
