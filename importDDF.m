@@ -25,7 +25,7 @@ result = ns_SetLibrary('C:\DataWave\DWShared\nsDWFile64.dll');
 entityCount = fileInfo.EntityCount;
 [result, entityInfo] = ns_GetEntityInfo(handle, [1:entityCount]);
 % get digital input DIGITAL INPUT LABEL MUST BE 'Digital Input (1)'!!!!!
-eventIdx = find(strcmp({entityInfo.EntityLabel},'Digital Input (1)'));
+eventIdx = find(strcmp({entityInfo.EntityLabel},'Digital Input'));
 if ~isempty(eventIdx)
     for i=1:length(eventIdx)
         [result,eventInfo] = ns_GetEventInfo(handle,eventIdx);

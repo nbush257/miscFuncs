@@ -17,7 +17,7 @@ end
 % make data a column vector
 data = data(:);
 % if there are no nans
-if nn(data) == 0;
+if ~any(isnan(data))
     dataOUT = data;
     warning('No NaNs found. Returning original vector')
     return

@@ -2,10 +2,16 @@ function X_out = featureScaling(X,varargin)
 %% function X_out = featureScaling(X,[method])
 % this is a shortcut for performing feature scaling on a matrix of values.
 % Each row is an observation, each column is a feature.
-
 % subtract mean and divide by standard deviation.
-
+% =====================================================
+% INPUTS:   X -  an MxN matrix of M observations and N features
+%       
+%           [method] - either scales by standard deviation (std) or the
+%                  Max minus the min (minmax). Default is 'std'
+% OUTPUTS:  X_out - a scaled matrix
+% ======================================================
 % NEB 2016_06_08
+%% 
 if length(varargin)==1
     method = varargin{1};
 else

@@ -18,7 +18,7 @@ C(end) = 0;
 cStart = find(diff(C)==1)+1;
 cEnd = find(diff(C)==-1);
 
-ho
+hold on
 if ~isvector(C)% if the input is already converted from a binary vector to onsets, then skip conversion
     
     % Check input to make sure that the first column is starts and second

@@ -39,8 +39,9 @@ for ii =1:stride:length(w)
     
     subplot(2,2,1:2)
     cla
-    plot3(w(ii).x,w(ii).y,w(ii).z,'o-')
+    plot3(w(ii).x,w(ii).y,w(ii).z,'.-')
     axis equal
+    grid on
 
     if first
         ax1 = gca;
@@ -53,13 +54,13 @@ for ii =1:stride:length(w)
     
     subplot(2,2,3)
     cla
-    plot3(w(ii).x,w(ii).y,w(ii).z,'o-')
+    plot3(w(ii).x,w(ii).y,w(ii).z,'.-')
     view(0,90)
     axis equal
     
     subplot(2,2,4)
     cla
-    plot3(w(ii).x,w(ii).y,w(ii).z,'o-')
+    plot3(w(ii).x,w(ii).y,w(ii).z,'.-')
     view(0,0)
     axis equal
     
