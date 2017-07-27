@@ -1,4 +1,4 @@
-function plot3Dwhisker(w,stride)
+function plot3Dwhisker(w,stride,start)
 max_x = nan(length(w),1);
 max_y = nan(length(w),1);
 max_z = nan(length(w),1);
@@ -32,7 +32,7 @@ min_z = min(min_z);
 first = true;
 
 
-for ii =1:stride:length(w)
+for ii =start:stride:length(w)
     if isempty(w(ii).x)
         continue
     end
