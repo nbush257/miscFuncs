@@ -1,12 +1,14 @@
-function [l_mm,l_pix] = scannedWhiskerLength(im_file_name,varargin)
-%% function l_mm = scannedWhiskerLength(im_file_name,[dpi])
+function [l_mm,l_pix] = scannedWhiskerLength(im_file_name,thresh_sense,varargin)
+%% function l_mm = scannedWhiskerLength(im_file_name,[thresh_sense],[dpi])
 % This function takes an image file and computes the whisker arclength in
 % pixels and mm.
+% Thresh sense is the sensitivity of the local thresholding. Try 0.7
 %%
 close all
 l_mm = [];
 l_pix = [];
 %%
+
 
 I = imread(im_file_name);
 info = imfinfo(im_file_name);
@@ -21,10 +23,11 @@ title('place rectangle around whisker, then press enter')
 r = imrect();
 box = round(r.getPosition);
 pause
+close all
 I_crop = I(box(2):box(2)+box(4),box(1):box(1)+box(3));
-level = graythresh(I_crop);
+T = adaptthresh(I_crop,thresh_sense);
 
-BW = imbinarize(I_crop,level);
+BW = imbinarize(I_crop,T);
 BW  = imcomplement(BW);
 CC = bwconncomp(BW);
 
